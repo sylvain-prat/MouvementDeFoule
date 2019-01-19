@@ -1,0 +1,24 @@
+def CreateImage(Tab,Coord):
+    c = line([(0,0),(0,10),(10,10),(10,0),(0,0)]) + point([Coord[0],Coord[1]])
+    Tab.append(c)
+    return Tab
+    
+def AfficheTab(Tab):
+    for i in range (6):
+        Tab[i].show()
+
+Tab =[]
+Coord = (0,0)
+Tab =CreateImage(Tab,Coord)
+Coord = (1,1)
+Tab =CreateImage(Tab,Coord)
+Coord = (2,2)
+Tab =CreateImage(Tab,Coord)
+Coord = (3,3)
+Tab =CreateImage(Tab,Coord)
+Coord = (4,4)
+Tab =CreateImage(Tab,Coord)
+Coord = (5,5)  
+Tab =CreateImage(Tab,Coord)         
+AfficheTab(Tab)
+
