@@ -2,23 +2,21 @@ def CreateImage(Tab,Coord):
     c = line([(0,0),(0,10),(10,10),(10,0),(0,0)]) + point([Coord[0],Coord[1]])
     Tab.append(c)
     return Tab
-    
+
+def CreateMultiplePoint(TabDImage,TabCoord):
+    c = line([(0,0),(0,10),(10,10),(10,0),(0,0)])
+    for i in range(len(TabCoord)):
+        c += point([TabCoord[i][0],TabCoord[i][1]])
+    TabDImage.append(c)
+    return TabDImage
+
 def AfficheTab(Tab):
     for i in range (6):
         Tab[i].show()
 
-Tab =[]
-Coord = (0,0)
-Tab =CreateImage(Tab,Coord)
-Coord = (1,1)
-Tab =CreateImage(Tab,Coord)
-Coord = (2,2)
-Tab =CreateImage(Tab,Coord)
-Coord = (3,3)
-Tab =CreateImage(Tab,Coord)
-Coord = (4,4)
-Tab =CreateImage(Tab,Coord)
-Coord = (5,5)  
-Tab =CreateImage(Tab,Coord)         
-AfficheTab(Tab)
-
+TabDImage =[]
+TabCoord = [(1,1),(9,9)]
+TabDImage = CreateMultiplePoint(TabDImage,TabCoord)
+TabCoord = [(2,2),(8,8)]
+TabDImage = CreateMultiplePoint(TabDImage,TabCoord)
+AfficheTab(TabDImage)
