@@ -1,8 +1,8 @@
 #Créer une image à partir d'une coordonnées (pour un seul point)
-def CreateImage(Tab,Coord):
+def CreateImage(TabDImage,Coord):
     c = line([(0,0),(0,10),(10,10),(10,0),(0,0)]) + point([Coord[0],Coord[1]])
-    Tab.append(c)
-    return Tab
+    TabDImage.append(c)
+    return TabDImage
 
 #Créer une image à partir d'un tableau de coordonnées
 def CreateMultiplePoint(TabDImage,TabCoord):
@@ -18,7 +18,7 @@ def CreateMultipleImage(TabDImage,MatriceCoord,Salle):
         Image = Salle
         for j in range(len(MatriceCoord[i])):
             Image += point([MatriceCoord[i][j][0],MatriceCoord[i][j][1]])
-        TabDImage.append(Image)
+        TabDImage.append(Image) 
     return TabDImage
 
 #Permet d'afficher toutes les images d'un tableau
