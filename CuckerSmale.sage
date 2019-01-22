@@ -43,7 +43,7 @@ def V(TabPosition,i,h):
     lmd = 1
     
     #Constante beta pour phi à choisir
-    beta = 1
+    beta = 0.01
     
     #Nombre d'individu
     N = len(TabPosition)
@@ -75,7 +75,7 @@ def phi(x,b):
 def ModelisationCuckerSmale(TabPosition,Salle):
     MatriceCoord = []
     convertTab(TabPosition,MatriceCoord)
-    for i in range (80):
+    for i in range (160):
         TabPosition = CuckerSmale(TabPosition)
         convertTab(TabPosition,MatriceCoord)
     
@@ -100,24 +100,32 @@ def AnimateTab(TabDImage):
 def ShowAnimation(TabDImage):
     Animation = AnimateTab(TabDImage)
     Animation.show()
-       
-TabPosition = [[(1,1),(2,3.2)],
-               [(1,2),(3,4.2)],
-               [(1,3),(2,2.5)],
-               [(2,1),(2.6,2.3)],
-               [(2,2),(2.6,1.3)],
-               [(2,3),(1,3.4)],
-               [(3,1),(1.3,4.2)],
-               [(1.5,2.5),(3,4.2)],
-               [(1.5,3.5),(2,2.5)],
-               [(2.5,1.5),(2.6,2.3)],
-               [(2.5,2.5),(2.6,1.3)],
-               [(2.5,3.5),(1,3.4)],
-               [(3.5,1.5),(1.3,4.2)],
-               [(2.5,0.5),(0,1.3)]]
 
+def CalcVitesseInitial(TabPosition,PositionAAtteindre):
+    for i in range (len(TabPosition)):
+        ViX = ( PositionAAtteindre[0] - TabPosition[i][0][0] ) / 5
+        ViY = ( PositionAAtteindre[1] - TabPosition[i][0][1] ) / 5
+        TabPosition[i].append((ViX,ViY))
+    return TabPosition
+        
+TabPosition = [[(0.5,0.5)],
+               [(1,2)],
+               [(4,0.5)],
+               [(1,3)],
+               [(0.5,1)],
+               [(0.5,2)],
+               [(1,0.5)],
+               [(1.5,1.25)],
+               [(1.5,2.5)],
+               [(1.5,3.5)],
+               [(2.5,1.5)],
+               [(2.5,2.5)],
+               [(2.5,3.5)],
+               [(3.5,1.5)],
+               [(2.5,0.5)]]
 
-Salle = line([(0,0),(0,20),(20,20),(20,0),(0,0)])
+TabPosition = CalcVitesseInitial(TabPosition,(10,10))
+Salle = line([(0,0),(0,10),(10,10),(10,0),(0,0)])
 ModelisationCuckerSmale(TabPosition,Salle)
 
 
