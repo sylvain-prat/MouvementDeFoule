@@ -56,6 +56,7 @@ class Salle:
             room += self.tabLine[i]
         room.show()
         
+        
 class Obstacle:
     def __init__(self,pos,longeur,largeur,salle):
         self.largeur = largeur
@@ -81,3 +82,32 @@ point1 = point((7,-3))
 point2 = point((8,2))
  
 print salle.equationD(point1,point2)
+
+
+
+from sympy.solvers import solve
+from sympy import Symbol
+
+def trouvePtInter():
+    EquationDroite = equationD(a,b) #Modifier a et b
+    EquationDroiteObstacle = equationD(a,b) #Modifier a et b avec les coordonnées de deux points de l'obstacle
+    
+    a = EquationDroite[0]
+    b = EquationDroite[1]
+    c = EquationDroiteObstacle[0]
+    d = EquationDroiteObstacle[1]
+    if((c-a) == 0):
+        return null
+    x = (b-a)/(b-d)
+    y = c * x + d
+    CoordIntersec = (x,y)
+    return CoordIntersec
+
+def VerifIntersection(Coord,CoordObs1, CoordObs2):
+    if(Coord[0] >= min(CoordObs1[0],CoordObs2[0]) and Coord[0] <= max(CoordObs2[0],CoordObs1[0])):
+        if(Coord[1] >= min(CoordObs1[1],CoordObs2[1]) and Coord[1] <= max(CoordObs1[1],CoordObs2[1])):
+            return true
+        else:
+            return false
+    else:
+        return false
