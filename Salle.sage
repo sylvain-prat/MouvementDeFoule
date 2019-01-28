@@ -32,11 +32,19 @@ class Salle:
                     p = point((i,j),size='2')
                     self.addPoint(p)
     
-    def drawLine(self):
-        for point in self.tabPt:
-            l = line([(0,self.largeur/2),(point[0][0],point[0][1])])
-            self.addLine(l)
+    def drawLine(self,point):
+        l = line([(0,self.largeur/2),(point[0][0][0],point[0][0][1])])
+        self.addLine(l)
         
+    def equationD(self,point1,point2):
+        Ya = point1[0][0][1]
+        Yb = point2[0][0][1]
+        Xa = point1[0][0][0]
+        Xb = point2[0][0][0]
+        A = (Yb - Ya)/(Xb - Xa)
+        B = Ya - A*Xa
+        return (A,B)
+  
     def draw(self):
         goal = point((0,self.largeur/2),rgbcolor='red',size=50)
         room = self.get() + goal
@@ -69,7 +77,7 @@ obs2 = Obstacle((20,25),2,12,salle)
 obs3 = Obstacle((2,28),10,5,salle)
 obs4 = Obstacle((32,8),6,13,salle)
 obs5 = Obstacle((41,30),4,9,salle)
+point1 = point((7,-3))
+point2 = point((8,2))
  
-salle.drawPt()
-salle.drawLine()
-salle.draw()
+print salle.equationD(point1,point2)
