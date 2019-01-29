@@ -47,12 +47,23 @@ class Salle:
             room += self.tabLine[i]
         room.show()
         
+
+    def PointIntersectObs(self,point):
+        equationPt = equationD((point[0],point[1]),(0, (self.largeur)/2))
+        tabIntersect = []
+        for(obs in self.tabObs):
+            for(droite in obs.tabEquaD):
+                tmp = trouvePtInter(equationPt,droite)
+                if(tmp =! None and #testerVerifIntersection ):
+                    tabIntersect.append(tmp)
         
 class Obstacle:
     def __init__(self,pos,longeur,largeur,salle):
         self.largeur = largeur
         self.longeur = longeur
         self.pos = pos
+        self.tabEquaD = []
+        self.addEquaD()
         salle.addObs(self)
         
     def get(self):
@@ -61,30 +72,47 @@ class Obstacle:
                      (self.pos[0]+self.longeur,self.pos[1]+self.largeur),
                      (self.pos[0],self.pos[1]+self.largeur),
                      (self.pos[0],self.pos[1])])
+    
+    def addEquaD(self):
+        equa1 = equationD(point((self.pos[0],self.pos[1])),point((self.pos[0]+self.longeur,self.pos[1])))
+        equa2 = equationD(point((self.pos[0]+self.longeur,self.pos[1])),point((self.pos[0]+self.longeur,self.pos[1]+self.largeur)))
+        equa3 = equationD(point((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),point((self.pos[0],self.pos[1]+self.largeur)))
+        equa4 = equationD(point((self.pos[0],self.pos[1]+self.largeur)),point((self.pos[0],self.pos[1])))
+        self.tabEquaD.append(equa1)
+        self.tabEquaD.append(equa2)
+        self.tabEquaD.append(equa3)
+        self.tabEquaD.append(equa4)
 
 
 def equationD(point1,point2):
-    Ya = point1[0][0][1]
-    Yb = point2[0][0][1]
-    Xa = point1[0][0][0]
-    Xb = point2[0][0][0]
+    Ya = point1[1]
+    Yb = point2[1]
+    Xa = point1[0]
+    Xb = point2[0]
+    if(Xb-Xa == 0):
+        return(Xb,None)
     A = (Yb - Ya)/(Xb - Xa)
     B = Ya - A*Xa
     return (A,B)
 
-def trouvePtInter():
-    EquationDroite = equationD(a,b) #Modifier a et b
-    EquationDroiteObstacle = equationD(a,b) #Modifier a et b avec les coordonnées de deux points de l'obstacle
-    
-    a = EquationDroite[0]
-    b = EquationDroite[1]
-    c = EquationDroiteObstacle[0]
-    d = EquationDroiteObstacle[1]
-    if((c-a) == 0):
-        return null
-    x = (b-a)/(b-d)
-    y = c * x + d
-    CoordIntersec = (x,y)
+def trouvePtInter(EquaDroite,EquaObs):
+    if(EquaObs[1] != None):
+        a = EquaDroite[0]
+        b = EquaDroite[1]
+        c = EquaObs[0]
+        d = EquaObs[1]
+        if((c-a) == 0):
+            return None
+        x = (b-a)/(b-d)
+        y = c * x + d
+        CoordIntersec = (x,y)
+    else:
+        a = EquaDroite[0]
+        b = EquaDroite[1]
+        c = EquaObs[0]
+        if(a==0):
+            return None
+        CoordIntersec = (c,(a*c)+b)
     return CoordIntersec
 
 def VerifIntersection(Coord,CoordObs1, CoordObs2):
@@ -95,8 +123,6 @@ def VerifIntersection(Coord,CoordObs1, CoordObs2):
             return false
     else:
         return false
-
-    
         
 salle = Salle(50,50)
 obs1 = Obstacle((10,10),5,8,salle)
@@ -107,4 +133,4 @@ obs5 = Obstacle((41,30),4,9,salle)
 point1 = point((7,-3))
 point2 = point((8,2))
  
-print salle.equationD(point1,point2)
+print trouvePtInter((-1,0),(2,None))
