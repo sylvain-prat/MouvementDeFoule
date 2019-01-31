@@ -51,11 +51,16 @@ class Salle:
     def PointIntersectObs(self,point):
         equationPt = equationD((point[0],point[1]),(0, (self.largeur)/2))
         tabIntersect = []
-        for(obs in self.tabObs):
-            for(droite in obs.tabEquaD):
-                tmp = trouvePtInter(equationPt,droite)
-                if(tmp =! None and #testerVerifIntersection ):
+        for obs in self.tabObs :
+            for droite in obs.tabEquaD :
+                tmp = trouvePtInter(equationPt,droite[1])
+                if( tmp != None and VerifIntersection(tmp,droite[0][0],droite[0][1])):
                     tabIntersect.append(tmp)
+        finalPt = (0,0)
+        for point in tabIntersect :
+            if(point[0] > finalPt[0]):
+                finalPt = point
+        return finalPt
         
 class Obstacle:
     def __init__(self,pos,longeur,largeur,salle):
@@ -74,14 +79,14 @@ class Obstacle:
                      (self.pos[0],self.pos[1])])
     
     def addEquaD(self):
-        equa1 = equationD(point((self.pos[0],self.pos[1])),point((self.pos[0]+self.longeur,self.pos[1])))
-        equa2 = equationD(point((self.pos[0]+self.longeur,self.pos[1])),point((self.pos[0]+self.longeur,self.pos[1]+self.largeur)))
-        equa3 = equationD(point((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),point((self.pos[0],self.pos[1]+self.largeur)))
-        equa4 = equationD(point((self.pos[0],self.pos[1]+self.largeur)),point((self.pos[0],self.pos[1])))
-        self.tabEquaD.append(equa1)
-        self.tabEquaD.append(equa2)
-        self.tabEquaD.append(equa3)
-        self.tabEquaD.append(equa4)
+        equa1 = equationD(((self.pos[0],self.pos[1])),((self.pos[0]+self.longeur,self.pos[1])))
+        equa2 = equationD(((self.pos[0]+self.longeur,self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]+self.largeur)))
+        equa3 = equationD(((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]+self.largeur)))
+        equa4 = equationD(((self.pos[0],self.pos[1]+self.largeur)),((self.pos[0],self.pos[1])))
+        self.tabEquaD.append(((((self.pos[0],self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]))),equa1))
+        self.tabEquaD.append(((((self.pos[0]+self.longeur,self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]+self.largeur))),equa2))
+        self.tabEquaD.append(((((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]+self.largeur))),equa3))
+        self.tabEquaD.append(((((self.pos[0],self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]))),equa4))
 
 
 def equationD(point1,point2):
@@ -103,7 +108,7 @@ def trouvePtInter(EquaDroite,EquaObs):
         d = EquaObs[1]
         if((c-a) == 0):
             return None
-        x = (b-a)/(b-d)
+        x = (b-d)/(c-a)
         y = c * x + d
         CoordIntersec = (x,y)
     else:
@@ -130,7 +135,10 @@ obs2 = Obstacle((20,25),2,12,salle)
 obs3 = Obstacle((2,28),10,5,salle)
 obs4 = Obstacle((32,8),6,13,salle)
 obs5 = Obstacle((41,30),4,9,salle)
-point1 = point((7,-3))
+point1 = point((42,12))
 point2 = point((8,2))
  
-print trouvePtInter((-1,0),(2,None))
+salle.drawLine(point1)
+print salle.PointIntersectObs((42,12))
+salle.draw()
+                  
