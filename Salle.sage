@@ -35,7 +35,7 @@ class Salle:
                     self.addPoint(p)
     
     def drawLine(self,point):
-        l = line([(0,self.largeur/2),(point[0][0][0],point[0][0][1])])
+        l = line([(0,self.largeur/2),(point[0],point[1])])
         self.addLine(l)
           
     def draw(self):
@@ -69,9 +69,9 @@ class Salle:
                 if( tmp != None and VerifIntersection(tmp,droite[0][0],droite[0][1])):
                     tabIntersect.append((tmp,(droite[0][0],droite[0][1])))
         finalPt = ((0,0),((0,0),(0,0)))
-        for point in tabIntersect :
-            if(point[0][0] > finalPt[0][0]):
-                finalPt = point
+        for pt in tabIntersect :
+            if(pt[0][0] > finalPt[0][0] and pt[0][0] < point[0]):
+                finalPt = pt
         return finalPt
         
 class Obstacle:
@@ -160,7 +160,7 @@ def PointLePlusProche(pointSortie,pointObs0,pointObs1):
         return 1
 
 def CalculVecteurSpontane(pointDepart,pointArrivee):
-    k = 1 #Constante à définir, distance parcourue par un point    
+    k = 0.2 #Constante à définir, distance parcourue par un point    
     Ax = pointDepart[0]
     Ay = pointDepart[1]
     
@@ -177,6 +177,11 @@ def CalculVecteurSpontane(pointDepart,pointArrivee):
     
     Dx = asin(teta) * k
     Dy = acos(teta) * k
+
+    if(Bx < Ax):
+        Dx *= -1
+    if(By < Ay):
+        Dy *= -1
     
     VSpontanee = (Dx,Dy)
     
@@ -186,7 +191,7 @@ def CalculVecteurSpontane(pointDepart,pointArrivee):
 def DeplacementPoint(pointSortie,pt,Salle):
     TabImage = []
     cpt = 0
-    while(pointSortie[0] != pt[0] and pointSortie[1] != pt[1] or cpt < 20): #Tant que le point ne superpose pas la sortie
+    while( (pointSortie[0] != pt[0] and pointSortie[1] != pt[1])): #Tant que le point ne superpose pas la sortie
         
         res = Salle.PointIntersectObs(pt) #Fonction pour verifier si il y a des obstacles
         
@@ -198,6 +203,8 @@ def DeplacementPoint(pointSortie,pt,Salle):
             
             res2 = PointLePlusProche(pointSortie,res[1][0],res[1][1])
             
+            print res[1][0],res[1][1]
+            
             if(res2 == 0):
                 VecSpont = CalculVecteurSpontane(pt,res[1][0]) #Calcul du vecteur spontanee du point vers le point 0 de l'obstacle
             else:
@@ -208,7 +215,8 @@ def DeplacementPoint(pointSortie,pt,Salle):
         image += point(pt)
         TabImage.append(image)
         cpt += 1
-        
+        if(cpt == 50):
+            break
     return TabImage
         
 #Permet de créer une animation à partir d'un tableau d'image
@@ -235,5 +243,5 @@ pt = (42,12)
 sortie = (0,25)
 
 tab = DeplacementPoint(sortie,pt,salle)
+
 ShowAnimation(tab)
-                  
