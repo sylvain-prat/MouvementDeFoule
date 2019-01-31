@@ -1,3 +1,5 @@
+from math import *
+
 class Salle:
     def __init__(self,longeur,largeur):
         self.largeur = largeur
@@ -47,6 +49,16 @@ class Salle:
             room += self.tabLine[i]
         room.show()
         
+    def image(self):
+        goal = point((0,self.largeur/2),rgbcolor='red',size=50)
+        room = self.get() + goal
+        for i in range (len(self.tabObs)):
+            room += self.tabObs[i].get()
+        for i in range(len(self.tabPt)):
+            room += self.tabPt[i]
+        for i in range(len(self.tabLine)):
+            room += self.tabLine[i]
+        return room
 
     def PointIntersectObs(self,point):
         equationPt = equationD((point[0],point[1]),(0, (self.largeur)/2))
@@ -55,10 +67,10 @@ class Salle:
             for droite in obs.tabEquaD :
                 tmp = trouvePtInter(equationPt,droite[1])
                 if( tmp != None and VerifIntersection(tmp,droite[0][0],droite[0][1])):
-                    tabIntersect.append(tmp)
-        finalPt = (0,0)
+                    tabIntersect.append((tmp,(droite[0][0],droite[0][1])))
+        finalPt = ((0,0),((0,0),(0,0)))
         for point in tabIntersect :
-            if(point[0] > finalPt[0]):
+            if(point[0][0] > finalPt[0][0]):
                 finalPt = point
         return finalPt
         
@@ -128,6 +140,85 @@ def VerifIntersection(Coord,CoordObs1, CoordObs2):
             return false
     else:
         return false
+    
+def PointLePlusProche(pointSortie,pointObs0,pointObs1):
+    Sx = pointSortie[0]
+    Sy = pointSortie[1]
+    
+    O0x = pointObs0[0]
+    O0y = pointObs0[1]
+    
+    O1x = pointObs0[0]
+    O1y = pointObs0[1]
+    
+    SO0 = sqrt( ((O0x - Sx)**2) + ((O0y - Sy)**2) )
+    SO1 = sqrt( ((O1x - Sx)**2) + ((O1y - Sy)**2) )
+    
+    if(SO0 <= SO1):
+        return 0
+    else:
+        return 1
+
+def CalculVecteurSpontane(pointDepart,pointArrivee):
+    k = 1 #Constante à définir, distance parcourue par un point    
+    Ax = pointDepart[0]
+    Ay = pointDepart[1]
+    
+    Bx = pointArrivee[0]
+    By = pointArrivee[1]
+    
+    Cx = Bx
+    Cy = Ay
+    
+    AC = sqrt( ((Cx - Ax)**2) + ((Cy - Ay)**2) ) 
+    AB = sqrt( ((Bx - Ax)**2) + ((By - Ay)**2) )
+    
+    teta = cos(AC/AB)
+    
+    Dx = asin(teta) * k
+    Dy = acos(teta) * k
+    
+    VSpontanee = (Dx,Dy)
+    
+    return VSpontanee
+
+
+def DeplacementPoint(pointSortie,pt,Salle):
+    TabImage = []
+    cpt = 0
+    while(pointSortie[0] != pt[0] and pointSortie[1] != pt[1] or cpt < 20): #Tant que le point ne superpose pas la sortie
+        
+        res = Salle.PointIntersectObs(pt) #Fonction pour verifier si il y a des obstacles
+        
+        if(res[0] == (0,0)): #Si il ny a aucun obstacle vers la sortie
+            
+            VecSpont = CalculVecteurSpontane(pt,pointSortie) #Calcul du vecteur spontanee du point vers la sortie
+        
+        else:#il a des obstacles entre la sortie et le point
+            
+            res2 = PointLePlusProche(pointSortie,res[1][0],res[1][1])
+            
+            if(res2 == 0):
+                VecSpont = CalculVecteurSpontane(pt,res[1][0]) #Calcul du vecteur spontanee du point vers le point 0 de l'obstacle
+            else:
+                VecSpont = CalculVecteurSpontane(pt,res[1][1]) #Calcul du vecteur spontanee du point vers le point 1 de l'obstacle
+
+        pt = (pt[0]+VecSpont[0],pt[1]+VecSpont[1])
+        image = Salle.image()
+        image += point(pt)
+        TabImage.append(image)
+        cpt += 1
+        
+#Permet de créer une animation à partir d'un tableau d'image
+def AnimateTab(TabDImage):
+    #Regarder la doc de animate http://doc.sagemath.org/html/en/reference/plotting/sage/plot/animate.html
+    Animation = animate(TabDImage)
+    return Animation
+
+#Permet de créer et d'afficher une animation à partir d'un tableau d'image
+def ShowAnimation(TabDImage):
+    Animation = AnimateTab(TabDImage)
+    Animation.show()
         
 salle = Salle(50,50)
 obs1 = Obstacle((10,10),5,8,salle)
@@ -137,8 +228,10 @@ obs4 = Obstacle((32,8),6,13,salle)
 obs5 = Obstacle((41,30),4,9,salle)
 point1 = point((42,12))
 point2 = point((8,2))
- 
-salle.drawLine(point1)
-print salle.PointIntersectObs((42,12))
-salle.draw()
+
+pt = (42,12)
+sortie = (0,25)
+
+tab = DeplacementPoint(sortie,pt,salle)
+ShowAnimation(tab)
                   
