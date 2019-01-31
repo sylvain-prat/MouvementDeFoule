@@ -209,6 +209,8 @@ def DeplacementPoint(pointSortie,pt,Salle):
         TabImage.append(image)
         cpt += 1
         
+    return TabImage
+        
 #Permet de créer une animation à partir d'un tableau d'image
 def AnimateTab(TabDImage):
     #Regarder la doc de animate http://doc.sagemath.org/html/en/reference/plotting/sage/plot/animate.html
