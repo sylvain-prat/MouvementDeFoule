@@ -160,43 +160,58 @@ def PointLePlusProche(pointSortie,pointObs0,pointObs1):
         return 1
 
 def CalculVecteurSpontane(pointDepart,pointArrivee):
-    k = 0.2 #Constante à définir, distance parcourue par un point    
+    k = 1 #Constante à définir, distance parcourue par un point    
     Ax = pointDepart[0]
     Ay = pointDepart[1]
     
     Bx = pointArrivee[0]
     By = pointArrivee[1]
+    if(Ay == By):
+        AB = sqrt( ((Bx - Ax)**2) + ((By - Ay)**2) )
+        if(AB < k):
+            print "caca"
+            VSpontanee = (AB,0)
+        else:
+            VSpontanee = (k,0)
+    else:
+        Cx = Ax
+        Cy = By
     
-    Cx = Bx
-    Cy = Ay
-    
-    AC = sqrt( ((Cx - Ax)**2) + ((Cy - Ay)**2) ) 
-    AB = sqrt( ((Bx - Ax)**2) + ((By - Ay)**2) )
-    
-    teta = cos(AC/AB)
-    
-    Dx = asin(teta) * k
-    Dy = acos(teta) * k
+        AC = sqrt( ((Cx - Ax)**2) + ((Cy - Ay)**2) ) 
+        AB = sqrt( ((Bx - Ax)**2) + ((By - Ay)**2) )
 
-    if(Bx < Ax):
-        Dx *= -1
-    if(By < Ay):
-        Dy *= -1
-    
-    VSpontanee = (Dx,Dy)
-    
+        teta = cos(AC/AB)
+
+        
+
+        
+
+        if(AB < k):
+            Dx = abs(Bx-Ax)
+            Dy = abs(By-Ay) 
+        else:
+            Dx = asin(teta) * k
+            Dy = acos(teta) * k 
+        
+        
+        if(Bx < Ax):
+            Dx *= -1
+        if(By < Ay):
+            Dy *= -1
+        VSpontanee = (Dx,Dy)
     return VSpontanee
 
 
 def DeplacementPoint(pointSortie,pt,Salle):
     TabImage = []
     cpt = 0
-    while( (pointSortie[0] != pt[0] and pointSortie[1] != pt[1])): #Tant que le point ne superpose pas la sortie
+    while( pointSortie[0] != pt[0] and pointSortie[1] != pt[1]): #Tant que le point ne superpose pas la sortie
         
+       
         res = Salle.PointIntersectObs(pt) #Fonction pour verifier si il y a des obstacles
         
         if(res[0] == (0,0)): #Si il ny a aucun obstacle vers la sortie
-            
+            print "ici"
             VecSpont = CalculVecteurSpontane(pt,pointSortie) #Calcul du vecteur spontanee du point vers la sortie
         
         else:#il a des obstacles entre la sortie et le point
