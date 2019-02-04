@@ -233,7 +233,45 @@ def DeplacementPoint(pointSortie,pt,Salle):
         if(cpt == 50):
             break
     return TabImage
-        
+
+def DeplacementMultiPoint(pointSortie,pts,Salle):
+    TabImage = []
+    cpt = 0
+    while(allPointSortie(pointSortie,pts)): #Tant que le point ne superpose pas la sortie
+        image = Salle.image()
+        for i in range (len(pts)):
+            res = Salle.PointIntersectObs(pts[i]) #Fonction pour verifier si il y a des obstacles
+
+            if(res[0] == (0,0)): #Si il ny a aucun obstacle vers la sortie
+                print "ici"
+                VecSpont = CalculVecteurSpontane(pts[i],pointSortie) #Calcul du vecteur spontanee du point vers la sortie
+
+            else:#il a des obstacles entre la sortie et le point
+
+                res2 = PointLePlusProche(pointSortie,res[1][0],res[1][1])
+
+                print res[1][0],res[1][1]
+
+                if(res2 == 0):
+                    VecSpont = CalculVecteurSpontane(pts[i],res[1][0]) #Calcul du vecteur spontanee du point vers le point 0 de l'obstacle
+                else:
+                    VecSpont = CalculVecteurSpontane(pts[i],res[1][1]) #Calcul du vecteur spontanee du point vers le point 1 de l'obstacle
+
+            pts[i] = (pts[i][0]+VecSpont[0],pts[i][1]+VecSpont[1])
+            image += point(pts[i])
+        TabImage.append(image)
+        cpt += 1
+        if(cpt == 50):
+            break
+    return TabImage
+
+
+def allPointSortie(pointSortie,pts):
+    for i in range (len(pts)):
+        if(pointSortie[0] != pts[i][0] and pointSortie[1] != pts[i][1]):
+            return true
+    return false
+
 #Permet de créer une animation à partir d'un tableau d'image
 def AnimateTab(TabDImage):
     #Regarder la doc de animate http://doc.sagemath.org/html/en/reference/plotting/sage/plot/animate.html
@@ -257,6 +295,6 @@ point2 = point((8,2))
 pt = (42,12)
 sortie = (0,25)
 
-tab = DeplacementPoint(sortie,pt,salle)
+tab = DeplacementMultiPoint(sortie,[pt],salle)
 
 ShowAnimation(tab)
