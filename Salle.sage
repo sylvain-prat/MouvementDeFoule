@@ -169,10 +169,11 @@ def CalculVecteurSpontane(pointDepart,pointArrivee):
     if(Ay == By):
         AB = sqrt( ((Bx - Ax)**2) + ((By - Ay)**2) )
         if(AB < k):
-            print "caca"
-            VSpontanee = (AB,0)
+            Dx = AB
+            Dy = 0
         else:
-            VSpontanee = (k,0)
+            Dx = k
+            Dy = 0
     else:
         Cx = Ax
         Cy = By
@@ -193,12 +194,12 @@ def CalculVecteurSpontane(pointDepart,pointArrivee):
             Dx = asin(teta) * k
             Dy = acos(teta) * k 
         
-        
-        if(Bx < Ax):
-            Dx *= -1
-        if(By < Ay):
-            Dy *= -1
-        VSpontanee = (Dx,Dy)
+
+    if(Bx < Ax):
+        Dx *= -1
+    if(By < Ay):
+        Dy *= -1
+    VSpontanee = (Dx,Dy)
     return VSpontanee
 
 
@@ -293,8 +294,10 @@ point1 = point((42,12))
 point2 = point((8,2))
 
 pt = (42,12)
+pt2 = (30,30)
+
 sortie = (0,25)
 
-tab = DeplacementMultiPoint(sortie,[pt],salle)
+tab = DeplacementMultiPoint(sortie,[pt,pt2],salle)
 
 ShowAnimation(tab)
