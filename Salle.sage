@@ -244,18 +244,20 @@ def DeplacementMultiPoint(pointSortie,pts,Salle):
             res = Salle.PointIntersectObs(pts[i]) #Fonction pour verifier si il y a des obstacles
 
             if(res[0] == (0,0)): #Si il ny a aucun obstacle vers la sortie
-                print "ici"
+                print "Pts ", i,pointSortie
                 VecSpont = CalculVecteurSpontane(pts[i],pointSortie) #Calcul du vecteur spontanee du point vers la sortie
 
             else:#il a des obstacles entre la sortie et le point
 
                 res2 = PointLePlusProche(pointSortie,res[1][0],res[1][1])
 
-                print res[1][0],res[1][1]
+                
 
                 if(res2 == 0):
+                    print "Pts ", i, res[1][0]
                     VecSpont = CalculVecteurSpontane(pts[i],res[1][0]) #Calcul du vecteur spontanee du point vers le point 0 de l'obstacle
                 else:
+                    print "Pts ",i,res[1][1]
                     VecSpont = CalculVecteurSpontane(pts[i],res[1][1]) #Calcul du vecteur spontanee du point vers le point 1 de l'obstacle
 
             pts[i] = (pts[i][0]+VecSpont[0],pts[i][1]+VecSpont[1])
@@ -295,9 +297,10 @@ point2 = point((8,2))
 
 pt = (42,12)
 pt2 = (30,30)
-
+pt3 = (10,40)
+pt4 = (15,5)
 sortie = (0,25)
 
-tab = DeplacementMultiPoint(sortie,[pt,pt2],salle)
+tab = DeplacementMultiPoint(sortie,[pt,pt2,pt3,pt4],salle)
 
 ShowAnimation(tab)
