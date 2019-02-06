@@ -70,13 +70,16 @@ class Salle:
                     tabIntersect.append((tmp,(droite[0][0],droite[0][1]),obs))
         finalPt = ((0,0),((0,0),(0,0)))
         for pt in tabIntersect :
-            if(pt[0][0] >= finalPt[0][0] and pt[0][0] <= point[0]):
+            if(pt[0][0] > finalPt[0][0] and pt[0][0] <= point[0]):
                 finalPt = pt
             if(pt[2].isCorner(pt[0])):
-                if(pt[0] == pt[2].pos or pt[0] == pt[2].pos2):
-                    finalPt = (pt[0],(pt[2].pos1,pt[2].pos3))
+                if(not pt[0] == coinPlusProche((0,((self.largeur)/2)),pt[2].pos,pt[2].pos1,pt[2].pos2,pt[2].pos3)):
+                    if(pt[0] == pt[2].pos or pt[0] == pt[2].pos2):
+                        finalPt = (pt[0],(pt[2].pos1,pt[2].pos3))
+                    else:
+                        finalPt = (pt[0],(pt[2].pos,pt[2].pos2))
                 else:
-                    finalPt = (pt[0],(pt[2].pos,pt[2].pos2))
+                    finalPt = ((0,0),((0,0),(0,0)))
         print finalPt
         return finalPt
         
@@ -125,6 +128,36 @@ def equationD(point1,point2):
     B = Ya - A*Xa
     return (A,B)
 
+def coinPlusProche(sortie,coin1,coin2,coin3,coin4):
+    x0 = sortie[0]
+    y0 = sortie[1]
+    
+    x1 = coin1[0]
+    y1 = coin1[1]
+    
+    x2 = coin2[0]
+    y2 = coin2[1]
+    
+    x3 = coin3[0]
+    y3 = coin3[1]
+    
+    x4 = coin4[0]
+    y4 = coin4[1]
+    
+    o1 = sqrt( ((x1 - x0)**2) + ((y1 - y0)**2) )
+    o2 = sqrt( ((x2 - x0)**2) + ((y2 - y0)**2) )
+    o3 = sqrt( ((x3 - x0)**2) + ((y3 - y0)**2) )
+    o4 = sqrt( ((x4 - x0)**2) + ((y4 - y0)**2) )
+    
+    if(o1 == min(o1,min(o2,min(o3,o4)))):
+        return coin1
+    if(o2 == min(o1,min(o2,min(o3,o4)))):
+        return coin2
+    if(o3 == min(o1,min(o2,min(o3,o4)))):
+        return coin3
+    if(o4 == min(o1,min(o2,min(o3,o4)))):
+        return coin4
+
 def trouvePtInter(EquaDroite,EquaObs):
     if(EquaObs[1] != None):
         a = EquaDroite[0]
@@ -161,8 +194,8 @@ def PointLePlusProche(pointSortie,pointObs0,pointObs1):
     O0x = pointObs0[0]
     O0y = pointObs0[1]
     
-    O1x = pointObs0[0]
-    O1y = pointObs0[1]
+    O1x = pointObs1[0]
+    O1y = pointObs1[1]
     
     SO0 = sqrt( ((O0x - Sx)**2) + ((O0y - Sy)**2) )
     SO1 = sqrt( ((O1x - Sx)**2) + ((O1y - Sy)**2) )
@@ -256,6 +289,10 @@ def DeplacementMultiPoint(pointSortie,pts,Salle):
         for i in range (len(pts)):
             res = Salle.PointIntersectObs(pts[i]) #Fonction pour verifier si il y a des obstacles
 
+            if(cpt >= 40):
+                print "choix entre les points : ",res[1][0],res[1][1]
+                print "choix : " , PointLePlusProche(pointSortie,res[1][0],res[1][1])
+            
             if(res[0] == (0,0)): #Si il ny a aucun obstacle vers la sortie
                 print "Pts ", i,pointSortie
                 VecSpont = CalculVecteurSpontane(pts[i],pointSortie) #Calcul du vecteur spontanee du point vers la sortie
@@ -277,6 +314,7 @@ def DeplacementMultiPoint(pointSortie,pts,Salle):
             image += point(pts[i])
         TabImage.append(image)
         cpt += 1
+
         if(cpt == 50):
             break
     return TabImage
