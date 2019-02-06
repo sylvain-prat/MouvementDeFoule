@@ -67,11 +67,28 @@ class Salle:
             for droite in obs.tabEquaD :
                 tmp = trouvePtInter(equationPt,droite[1])
                 if( tmp != None and VerifIntersection(tmp,droite[0][0],droite[0][1])):
-                    tabIntersect.append((tmp,(droite[0][0],droite[0][1])))
+                    tabIntersect.append((tmp,(droite[0][0],droite[0][1]),obs))
         finalPt = ((0,0),((0,0),(0,0)))
         for pt in tabIntersect :
-            if(pt[0][0] > finalPt[0][0] and pt[0][0] < point[0]):
+            ptProchePoint = PointLePlusProche(point,pt[0],finalPt[0])
+            ptProcheSortie = PointLePlusProche((0,self.largeur/2),pt[0],point)
+            if(ptProchePoint == 0 and ptProcheSortie == 0  and ( not pt[2].isCorner(pt[0]))):                
                 finalPt = pt
+            if(ptProchePoint == 0 and ptProcheSortie == 0  and (pt[2].isCorner(pt[0]))):
+                if(pt[0] == pt[2].pos or pt[0] == pt[2].pos2):
+                    finalPt = (pt,(pt[2].pos1,pt[2].pos3))
+                    #resultat = PointLePlusProche((0,self.largeur/2),pt[2].pos1,pt[2].pos3)
+                    #if(resultat == 0):
+                    #    finalPt = pt[2].pos1
+                    #else :
+                    #    finalPt = pt[2].pos3
+                if(pt[0] == pt[2].pos1 or pt[0] == pt[2].pos3):
+                    finalPt = (pt,(pt[2].pos,pt[2].pos2))                    
+                    #resultat = PointLePlusProche((0,self.largeur/2),pt[2].pos,pt[2].pos2)
+                    #if(resultat == 0):
+                    #    finalPt = pt[2].pos
+                    #else :
+                    #    finalPt = pt[2].pos2                               
         return finalPt
         
 class Obstacle:
@@ -79,7 +96,14 @@ class Obstacle:
         self.largeur = largeur
         self.longeur = longeur
         self.pos = pos
+        self.pos1 = (self.pos[0]+self.longeur,self.pos[1])
+        self.pos2 = (self.pos[0]+self.longeur,self.pos[1]+self.largeur)
+        self.pos3 = (self.pos[0],self.pos[1]+self.largeur)
         self.tabEquaD = []
+        self.equa1 = equationD(((self.pos[0],self.pos[1])),((self.pos[0]+self.longeur,self.pos[1])))
+        self.equa2 = equationD(((self.pos[0]+self.longeur,self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]+self.largeur)))
+        self.equa3 = equationD(((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]+self.largeur)))
+        self.equa4 = equationD(((self.pos[0],self.pos[1]+self.largeur)),((self.pos[0],self.pos[1])))
         self.addEquaD()
         salle.addObs(self)
         
@@ -90,15 +114,15 @@ class Obstacle:
                      (self.pos[0],self.pos[1]+self.largeur),
                      (self.pos[0],self.pos[1])])
     
+    def isCorner(self,point):
+        return (point == self.pos) or (point[0] == self.pos[0]+self.longeur and point[1] == self.pos[1]) or (point[0] == self.pos[0]+self.longeur and point[1] == self.pos[1]+self.largeur) or (point[0] == self.pos[0] and point[1] == self.pos[1]+self.largeur)
+    
+    
     def addEquaD(self):
-        equa1 = equationD(((self.pos[0],self.pos[1])),((self.pos[0]+self.longeur,self.pos[1])))
-        equa2 = equationD(((self.pos[0]+self.longeur,self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]+self.largeur)))
-        equa3 = equationD(((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]+self.largeur)))
-        equa4 = equationD(((self.pos[0],self.pos[1]+self.largeur)),((self.pos[0],self.pos[1])))
-        self.tabEquaD.append(((((self.pos[0],self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]))),equa1))
-        self.tabEquaD.append(((((self.pos[0]+self.longeur,self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]+self.largeur))),equa2))
-        self.tabEquaD.append(((((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]+self.largeur))),equa3))
-        self.tabEquaD.append(((((self.pos[0],self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]))),equa4))
+        self.tabEquaD.append(((((self.pos[0],self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]))),self.equa1))
+        self.tabEquaD.append(((((self.pos[0]+self.longeur,self.pos[1])),((self.pos[0]+self.longeur,self.pos[1]+self.largeur))),self.equa2))
+        self.tabEquaD.append(((((self.pos[0]+self.longeur,self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]+self.largeur))),self.equa3))
+        self.tabEquaD.append(((((self.pos[0],self.pos[1]+self.largeur)),((self.pos[0],self.pos[1]))),self.equa4))
 
 
 def equationD(point1,point2):
@@ -180,19 +204,19 @@ def CalculVecteurSpontane(pointDepart,pointArrivee):
     
         AC = sqrt( ((Cx - Ax)**2) + ((Cy - Ay)**2) ) 
         AB = sqrt( ((Bx - Ax)**2) + ((By - Ay)**2) )
+        BC = sqrt( ((Cx - Bx)**2) + ((Cy - By)**2) )
 
-        teta = cos(AC/AB)
-
-        
-
+        #teta = cos(AC/AB)
         
 
         if(AB < k):
             Dx = abs(Bx-Ax)
             Dy = abs(By-Ay) 
         else:
-            Dx = asin(teta) * k
-            Dy = acos(teta) * k 
+            Dx = (k*BC)/AB 
+            Dy = (k*AC)/AB
+            #Dx = acos(teta) * k
+            #Dy = asin(teta) * k 
         
 
     if(Bx < Ax):
