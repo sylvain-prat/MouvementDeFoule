@@ -70,25 +70,14 @@ class Salle:
                     tabIntersect.append((tmp,(droite[0][0],droite[0][1]),obs))
         finalPt = ((0,0),((0,0),(0,0)))
         for pt in tabIntersect :
-            ptProchePoint = PointLePlusProche(point,pt[0],finalPt[0])
-            ptProcheSortie = PointLePlusProche((0,self.largeur/2),pt[0],point)
-            if(ptProchePoint == 0 and ptProcheSortie == 0  and ( not pt[2].isCorner(pt[0]))):                
+            if(pt[0][0] >= finalPt[0][0] and pt[0][0] <= point[0]):
                 finalPt = pt
-            if(ptProchePoint == 0 and ptProcheSortie == 0  and (pt[2].isCorner(pt[0]))):
+            if(pt[2].isCorner(pt[0])):
                 if(pt[0] == pt[2].pos or pt[0] == pt[2].pos2):
-                    finalPt = (pt,(pt[2].pos1,pt[2].pos3))
-                    #resultat = PointLePlusProche((0,self.largeur/2),pt[2].pos1,pt[2].pos3)
-                    #if(resultat == 0):
-                    #    finalPt = pt[2].pos1
-                    #else :
-                    #    finalPt = pt[2].pos3
-                if(pt[0] == pt[2].pos1 or pt[0] == pt[2].pos3):
-                    finalPt = (pt,(pt[2].pos,pt[2].pos2))                    
-                    #resultat = PointLePlusProche((0,self.largeur/2),pt[2].pos,pt[2].pos2)
-                    #if(resultat == 0):
-                    #    finalPt = pt[2].pos
-                    #else :
-                    #    finalPt = pt[2].pos2                               
+                    finalPt = (pt[0],(pt[2].pos1,pt[2].pos3))
+                else:
+                    finalPt = (pt[0],(pt[2].pos,pt[2].pos2))
+        print finalPt
         return finalPt
         
 class Obstacle:
